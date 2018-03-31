@@ -5,32 +5,55 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	 * ===================================初始===================================
 	 */
 	
+	////標題
+	//var canvas_title = document.getElementById("tetris_title");
+	//var ctx_title = canvas_title.getContext("2d");
+	//主區域
 	var canvas = document.getElementById("tetris");
 	var ctx = canvas.getContext("2d");
+	//預告區域
 	var canvas_next = document.getElementById("tetris_next");
 	var ctx_next = canvas_next.getContext("2d");
+	//備用區域
 	var canvas_spare = document.getElementById("tetris_spare");
 	var ctx_spare = canvas_spare.getContext("2d");
-	$scope.isGameOver = true;
-	$scope.TETRIS = {};
-	$scope.STYLE = {};
-	$scope.COLOR = {};
-	$scope.TETRIMINO = {};
-	$scope.KEY = {};
-	$scope.STATUS = {};
-	$scope.DIRECTION = {};
-	$scope.tetrisArray = [];
-	$scope.tetrimino_main = {};
 	
+	$scope.isGameOver = true;		//結束判斷
+	$scope.isGamePause = false;		//暫停判斷
+	$scope.TETRIS = {};				//方塊種類
+	$scope.STYLE = {};				//每一格、線長寬
+	$scope.COLOR = {};				//顏色
+	$scope.TETRIMINO = {};			//方塊長寬
+	$scope.KEY = {};				//按鍵陣列
+	$scope.STATUS = {};				//陣列有無
+	$scope.DIRECTION = {};			//按鍵
+	$scope.tetrisArray = [];		//主區域陣列
+	$scope.tetrimino_main = {};		//方塊陣列
+	$scope.SCORE = 0;				//計分
+	$scope.key_lock = 200;			//按鍵點擊限制(1000 = 1秒)
+	
+	
+	////標題:一次性繪製
+	//canvas_title.width = 400;
+	//canvas_title.height = 80;
+	//ctx_title.globalAlpha = 1;
+	//ctx_title.fillStyle = "rgb(0,0,255)";
+	//ctx_title.beginPath();
+	//ctx_title.textAlign = "center";
+	//ctx_title.font = "80px Arial";
+	//ctx_title.fillText("TETRIS", canvas_title.width/2, canvas_title.height);
+	//ctx_title.closePath();
+	//ctx_title.stroke();
+	//ctx_title.fill();
+		
 	$scope.init = function(){
+		$scope.SCORE = 0;
 		canvas = document.getElementById("tetris");
 		ctx = canvas.getContext("2d");
 		canvas_next = document.getElementById("tetris_next");
 		ctx_next = canvas_next.getContext("2d");
 		canvas_spare = document.getElementById("tetris_spare");
 		ctx_spare = canvas_spare.getContext("2d");
-		
-		$scope.isGameOver = true;
 		
 		//主區域長寬格數
 		$scope.TETRIS = {width: 10, height: 21};
@@ -78,10 +101,10 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 		$scope.KEY = {
 			ENTER: "Enter",
 			SPACE: " ",
-			CONTROL: "Control",
-			SHIFT: "Shift",
 			Z: "z",
 			X: "x",
+			C: "c",
+			P: "p",
 			ARROW_UP: "ArrowUp",
 			ARROW_RIGHT: "ArrowRight",
 			ARROW_DOWN: "ArrowDown",
@@ -215,11 +238,15 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	$scope.start = function(){
 		$scope.isGameOver = false;
 		//每秒往下一格。
+		var event = new Event('keydown');
+		event.key = $scope.KEY.ARROW_DOWN;
+		document.dispatchEvent(event);
 		$scope.interval = setInterval(function () {
 			var event = new Event('keydown');
 			event.key = $scope.KEY.ARROW_DOWN;
 			document.dispatchEvent(event);
 		}, 1000);
+		$scope.isGamePause = false;
 	}
 	
 	/**
@@ -228,7 +255,38 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	$scope.gameOver = function () {
 		$scope.isGameOver = true;
 		clearInterval($scope.interval);
-		alert("Game Over");
+		$scope.pause("GAME OVER");
+		
+	};
+	
+	/**
+	 * ===================================暫停===================================
+	 */
+	 $scope.pause = function (text) {
+		clearInterval($scope.interval);
+		
+		//背景
+		ctx.globalAlpha = 0.5;
+		ctx.fillStyle = "rgb(0,0,0)";
+		ctx.beginPath();
+		ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.fill();
+		//最上面幾行擦掉。
+		ctx.clearRect(0, 0, $scope.TETRIS.width * $scope.STYLE.gridPixel, $scope.STYLE.eraseLineCount * $scope.STYLE.gridPixel);
+		
+		//字
+		ctx.globalAlpha = 1;
+		ctx.fillStyle = "rgb(255,255,255)";
+		ctx.beginPath();
+		ctx.textAlign = "center";
+		ctx.font = "40px Arial";
+		ctx.fillText(text, canvas.width/2, canvas.height/3);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.fill();
+		$scope.isGamePause = true;
 	};
 	
 	/**
@@ -498,20 +556,38 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	 * =================================按鍵操作=================================
 	 */
 	document.addEventListener('keydown', function (event) {
+		
 		var key = event.key;
 		switch (key) {
-			
-			//START
+			//開始
 			case $scope.KEY.ENTER:
 				if($scope.isGameOver){
 					$scope.start();
 					$scope.next_init();
 				}
 				break;
-			case $scope.KEY.CONTROL:
+				
+			//暫停
+			case $scope.KEY.P:
+				if($scope.isGameOver){
+					return;
+				}
+
+				//停止=>開始
+				if($scope.isGamePause){
+					$scope.start();
+				}
+				//開始=>停止
+				else{
+					$scope.pause('PAUSE');
+				}
+				break;
 			
 			//逆時針旋轉
 			case $scope.KEY.Z:
+				if($scope.isGameOver){
+					return;
+				}
 				$scope.rotate($scope.DIRECTION.ANTICLOCKWISE);
 				//如果此操作會發生碰撞，就返回剛剛對俄羅斯方塊的操作。
 				if ($scope.isCollision($scope.tetrimino_main)) {
@@ -523,6 +599,9 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				
 			//順時針旋轉
 			case $scope.KEY.X:
+				if($scope.isGameOver){
+					return;
+				}
 				$scope.rotate($scope.DIRECTION.CLOCKWISE);
 				//如果此操作會發生碰撞，就返回剛剛對俄羅斯方塊的操作。
 				if ($scope.isCollision($scope.tetrimino_main)) {
@@ -533,7 +612,10 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				break;
 			
 			//調換
-			case $scope.KEY.SHIFT:
+			case $scope.KEY.C:
+				if($scope.isGameOver){
+					return;
+				}
 				$scope.change();
 				//如果此操作會發生碰撞，就返回剛剛對俄羅斯方塊的操作。
 				if ($scope.isCollision($scope.tetrimino_main)) {
@@ -546,6 +628,9 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 			
 			//↑
 			case $scope.KEY.ARROW_UP:
+				if($scope.isGameOver){
+					return;
+				}
 				$scope.rotate($scope.DIRECTION.CLOCKWISE);
 				//如果此操作會發生碰撞，就返回剛剛對俄羅斯方塊的操作。
 				if ($scope.isCollision($scope.tetrimino_main)) {
@@ -557,6 +642,9 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 			
 			//↓
 			case $scope.KEY.ARROW_DOWN:
+				if($scope.isGameOver){
+					return;
+				}
 				$scope.move($scope.DIRECTION.DOWN);
 				//如果此操作會發生碰撞，就返回剛剛對俄羅斯方塊的操作。
 				if ($scope.isCollision($scope.tetrimino_main)) {
@@ -587,6 +675,9 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 			
 			//←
 			case $scope.KEY.ARROW_LEFT:
+				if($scope.isGameOver){
+					return;
+				}
 				$scope.move($scope.DIRECTION.LEFT);
 				//如果此操作會發生碰撞，就返回剛剛對俄羅斯方塊的操作。
 				if ($scope.isCollision($scope.tetrimino_main)) {
@@ -598,6 +689,9 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 			
 			//→
 			case $scope.KEY.ARROW_RIGHT:
+				if($scope.isGameOver){
+					return;
+				}
 				$scope.move($scope.DIRECTION.RIGHT);
 				//如果此操作會發生碰撞，就返回剛剛對俄羅斯方塊的操作。
 				if ($scope.isCollision($scope.tetrimino_main)) {
@@ -608,6 +702,9 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				break;
 			//▼
 			case $scope.KEY.SPACE:
+				if($scope.isGameOver){
+					return;
+				}
 				while (!$scope.isCollision($scope.tetrimino_main)) {
 					$scope.move($scope.DIRECTION.DOWN);
 				}
