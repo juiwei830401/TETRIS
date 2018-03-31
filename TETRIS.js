@@ -26,11 +26,12 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	$scope.TETRIMINO = {};			//方塊長寬
 	$scope.KEY = {};				//按鍵陣列
 	$scope.STATUS = {};				//陣列有無
-	$scope.DIRECTION = {};			//按鍵
+	$scope.DIRECTION = {};			//按鍵按鍵
+	$scope.KEY_LOCK = {};			//按鍵狀態
 	$scope.tetrisArray = [];		//主區域陣列
 	$scope.tetrimino_main = {};		//方塊陣列
 	$scope.SCORE = 0;				//計分
-	$scope.key_lock = 200;			//按鍵點擊限制(1000 = 1秒)
+	$scope.lock_time = 100;			//按鍵點擊限制(1000 = 1秒)
 	
 	
 	////標題:一次性繪製
@@ -109,6 +110,20 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 			ARROW_RIGHT: "ArrowRight",
 			ARROW_DOWN: "ArrowDown",
 			ARROW_LEFT: "ArrowLeft"
+		}
+		
+		//按鍵狀態:0=開，1=鎖
+		$scope.KEY_LOCK = {
+			ENTER: 0,
+			SPACE: 0,
+			Z: 0,
+			X: 0,
+			C: 0,
+			P: 0,
+			ARROW_UP: 0,
+			ARROW_RIGHT: 0,
+			ARROW_DOWN: 0,
+			ARROW_LEFT: 0
 		}
 		
 		//狀態:0=無，1=有
@@ -554,11 +569,13 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	 * =================================按鍵操作=================================
 	 */
 	document.addEventListener('keydown', function (event) {
-		
 		var key = event.key;
 		switch (key) {
 			//開始
 			case $scope.KEY.ENTER:
+				if($scope.KEY_LOCK.ENTER == 1){
+					return;
+				}
 				if($scope.isGameOver){
 					if($scope.isGamePause){
 						$scope.init();
@@ -566,11 +583,14 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 					$scope.start();
 					$scope.next_init();
 				}
+				
+				//鎖鍵
+				$scope.KEY_LOCK.ENTER = 1;
 				break;
 				
 			//暫停
 			case $scope.KEY.P:
-				if($scope.isGameOver){
+				if($scope.isGameOver || $scope.KEY_LOCK.P == 1){
 					return;
 				}
 
@@ -582,11 +602,13 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				else{
 					$scope.pause('PAUSE');
 				}
+				//鎖鍵
+				$scope.KEY_LOCK.P = 1;
 				break;
 			
 			//逆時針旋轉
 			case $scope.KEY.Z:
-				if($scope.isGameOver){
+				if($scope.isGameOver || $scope.KEY_LOCK.Z == 1){
 					return;
 				}
 				$scope.rotate($scope.DIRECTION.ANTICLOCKWISE);
@@ -596,11 +618,13 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				} else {
 					$scope.redraw();
 				}
+				//鎖鍵
+				$scope.KEY_LOCK.Z = 1;
 				break;
 				
 			//順時針旋轉
 			case $scope.KEY.X:
-				if($scope.isGameOver){
+				if($scope.isGameOver || $scope.KEY_LOCK.X == 1){
 					return;
 				}
 				$scope.rotate($scope.DIRECTION.CLOCKWISE);
@@ -610,11 +634,13 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				} else {
 					$scope.redraw();
 				}
+				//鎖鍵
+				$scope.KEY_LOCK.X = 1;
 				break;
 			
 			//調換
 			case $scope.KEY.C:
-				if($scope.isGameOver){
+				if($scope.isGameOver || $scope.KEY_LOCK.C == 1){
 					return;
 				}
 				$scope.change();
@@ -625,11 +651,13 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 					$scope.redraw();
 					$scope.redraw_spare();
 				}
+				//鎖鍵
+				$scope.KEY_LOCK.C = 1;
 				break;
 			
 			//↑
 			case $scope.KEY.ARROW_UP:
-				if($scope.isGameOver){
+				if($scope.isGameOver || $scope.KEY_LOCK.ARROW_UP == 1){
 					return;
 				}
 				$scope.rotate($scope.DIRECTION.CLOCKWISE);
@@ -639,11 +667,13 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				} else {
 					$scope.redraw();
 				}
+				//鎖鍵
+				$scope.KEY_LOCK.ARROW_UP = 1;
 				break;
 			
 			//↓
 			case $scope.KEY.ARROW_DOWN:
-				if($scope.isGameOver){
+				if($scope.isGameOver || $scope.KEY_LOCK.ARROW_DOWN == 1){
 					return;
 				}
 				$scope.move($scope.DIRECTION.DOWN);
@@ -672,11 +702,17 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				} else {
 					$scope.redraw();
 				}
+				//鎖鍵
+				$scope.KEY_LOCK.ARROW_DOWN = 1;
+				//延遲後解鎖
+				setTimeout(function(){
+					$scope.KEY_LOCK.ARROW_DOWN = 0;
+				},$scope.lock_time);
 				break;
 			
 			//←
 			case $scope.KEY.ARROW_LEFT:
-				if($scope.isGameOver){
+				if($scope.isGameOver || $scope.KEY_LOCK.ARROW_LEFT == 1){
 					return;
 				}
 				$scope.move($scope.DIRECTION.LEFT);
@@ -686,11 +722,17 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				} else {
 					$scope.redraw();
 				}
+				//鎖鍵
+				$scope.KEY_LOCK.ARROW_LEFT = 1;
+				//延遲後解鎖
+				setTimeout(function(){
+					$scope.KEY_LOCK.ARROW_LEFT = 0;
+				},$scope.lock_time);
 				break;
 			
 			//→
 			case $scope.KEY.ARROW_RIGHT:
-				if($scope.isGameOver){
+				if($scope.isGameOver || $scope.KEY_LOCK.ARROW_RIGHT == 1){
 					return;
 				}
 				$scope.move($scope.DIRECTION.RIGHT);
@@ -700,10 +742,17 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				} else {
 					$scope.redraw();
 				}
+				//鎖鍵
+				$scope.KEY_LOCK.ARROW_RIGHT = 1;
+				//延遲後解鎖
+				setTimeout(function(){
+					$scope.KEY_LOCK.ARROW_RIGHT = 0;
+				},$scope.lock_time);
 				break;
+			
 			//▼
 			case $scope.KEY.SPACE:
-				if($scope.isGameOver){
+				if($scope.isGameOver || $scope.KEY_LOCK.SPACE == 1){
 					return;
 				}
 				while (!$scope.isCollision($scope.tetrimino_main)) {
@@ -734,6 +783,50 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				} else {
 					$scope.redraw();
 				}
+				//鎖鍵
+				$scope.KEY_LOCK.SPACE = 1;
+				break;
+		}
+	});
+	
+	/**
+	 * ========================解鎖按鍵(按住連續觸發防呆)========================
+	 */
+	document.addEventListener('keyup', function (event) {
+		var key = event.key;
+		switch (key) {
+			//開始
+			case $scope.KEY.ENTER:
+				$scope.KEY_LOCK.ENTER = 0;
+				break;
+				
+			//暫停
+			case $scope.KEY.P:
+				$scope.KEY_LOCK.P = 0;
+				break;
+			
+			//逆時針旋轉
+			case $scope.KEY.Z:
+				$scope.KEY_LOCK.Z = 0;
+				break;
+				
+			//順時針旋轉
+			case $scope.KEY.X:
+				$scope.KEY_LOCK.X = 0;
+				break;
+			
+			//調換
+			case $scope.KEY.C:
+				$scope.KEY_LOCK.C = 0;
+				break;
+			
+			//↑
+			case $scope.KEY.ARROW_UP:
+				$scope.KEY_LOCK.ARROW_UP = 0;
+				break;
+			//▼
+			case $scope.KEY.SPACE:
+				$scope.KEY_LOCK.SPACE = 0;
 				break;
 		}
 	});
