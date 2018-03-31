@@ -54,13 +54,13 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 			dropFillAlpha: 0.5,
 			//依照不同種類的俄羅斯方塊給予不同的顏色。
 			TETRIMINO: {
-				I: "rgb(50,190,250)",
-				J: "rgb(68,100,233)",
-				L: "rgb(255,126,37)",
-				O: "rgb(255,194,37)",
-				S: "rgb(124,212,36)",
-				T: "rgb(210,76,173)",
-				Z: "rgb(250,50,90)"
+				I: "rgb(150, 200, 250)",
+				J: "rgb(0, 100, 200)",
+				L: "rgb(250, 150, 0)",
+				O: "rgb(255, 100, 100)",
+				S: "rgb(150, 250, 150)",
+				T: "rgb(250, 200, 250)",
+				Z: "rgb(200, 100, 200)"
 			}
 		};
 		//方塊設定(4種方向的形狀)
