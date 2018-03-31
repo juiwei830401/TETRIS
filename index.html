@@ -9,13 +9,19 @@
 	</head>
 
 	<body ng-app="myTETRIS" ng-controller="TETRIS">
-		<table style="margin: 0 auto;">
+		<table class="tetris_table">
+			<!--<tr>												-->
+			<!--	<td align="center" valign="top" colspan="3">	-->
+			<!--		<canvas id="tetris_title"></canvas>			-->
+			<!--	</td>											-->
+			<!--</tr>												-->
 			<tr>
 				<td valign="top">
 					<canvas class="tetris_spare" id="tetris_spare"></canvas>
 				</td>
 				<td valign="top">
 					<canvas class="tetris" id="tetris"></canvas>
+					<span ng-show="GameOverLogo">GameOver</span>
 				</td>
 				<td valign="top">
 					<canvas class="tetris_next" id="tetris_next"></canvas>
