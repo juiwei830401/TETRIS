@@ -1,0 +1,23 @@
+.tetris_spare {
+    display: block;
+	border-radius: 10px;
+	background: radial-gradient(#ffff00, #ffd000);
+	padding: 25px;
+	left: 25px;
+	position: relative;
+}
+.tetris {
+    display: block;
+	border-radius: 10px;
+	background: radial-gradient(#ffff00, #ffd000);
+	padding: 25px;
+	padding-top: 0px;
+}
+.tetris_next {
+    display: block;
+	border-radius: 10px;
+	background: radial-gradient(#ffff00, #ffd000);
+	padding: 25px;
+	right: 25px;
+	position: relative;
+}
