@@ -238,9 +238,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	$scope.start = function(){
 		$scope.isGameOver = false;
 		//每秒往下一格。
-		var event = new Event('keydown');
-		event.key = $scope.KEY.ARROW_DOWN;
-		document.dispatchEvent(event);
+		$scope.redraw();
 		$scope.interval = setInterval(function () {
 			var event = new Event('keydown');
 			event.key = $scope.KEY.ARROW_DOWN;
@@ -562,6 +560,9 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 			//開始
 			case $scope.KEY.ENTER:
 				if($scope.isGameOver){
+					if($scope.isGamePause){
+						$scope.init();
+					}
 					$scope.start();
 					$scope.next_init();
 				}
