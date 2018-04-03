@@ -11,20 +11,28 @@
 	<body ng-app="myTETRIS" ng-controller="TETRIS">
 		<table class="tetris_table">
 			<!--<tr>												-->
-			<!--	<td align="center" valign="top" colspan="3">	-->
+			<!--	<td align="center" valign="top" colspan="3">    -->
 			<!--		<canvas id="tetris_title"></canvas>			-->
 			<!--	</td>											-->
 			<!--</tr>												-->
 			<tr>
-				<td valign="top">
+				<td valign="top" rowspan="2">
 					<canvas class="tetris_spare" id="tetris_spare"></canvas>
 				</td>
-				<td valign="top">
+				<td valign="top" rowspan="2">
 					<canvas class="tetris" id="tetris"></canvas>
-					<span ng-show="GameOverLogo">GameOver</span>
 				</td>
 				<td valign="top">
 					<canvas class="tetris_next" id="tetris_next"></canvas>
+				</td>
+			</tr>
+			<tr>
+				<td valign="top">
+					<span>Score : </span>
+					<span id="score"></span>
+					<br>
+					<span>Level : </span>
+					<span id="level"></span>
 				</td>
 			</tr>
 		<table>
