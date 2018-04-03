@@ -30,9 +30,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	$scope.KEY_LOCK = {};			//按鍵狀態
 	$scope.tetrisArray = [];		//主區域陣列
 	$scope.tetrimino_main = {};		//方塊陣列
-	$scope.SCORE = 0;				//計分
-	$scope.lock_time = 100;			//按鍵點擊限制(1000 = 1秒)
-	
+	$scope.DATA = {};				//數據陣列
 	
 	////標題:一次性繪製
 	//canvas_title.width = 400;
@@ -48,17 +46,19 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	//ctx_title.fill();
 		
 	$scope.init = function(){
-		$scope.SCORE = 0;
 		canvas = document.getElementById("tetris");
 		ctx = canvas.getContext("2d");
 		canvas_next = document.getElementById("tetris_next");
 		ctx_next = canvas_next.getContext("2d");
 		canvas_spare = document.getElementById("tetris_spare");
 		ctx_spare = canvas_spare.getContext("2d");
-		
+		document.getElementById("score").innerHTML = 0;
+		document.getElementById("level").innerHTML = '1';
+
 		//主區域長寬格數
 		$scope.TETRIS = {width: 10, height: 21};
 		
+		//每一格、線長寬
 		$scope.STYLE = {
 			//線寬。
 			linePixel: 3,
@@ -67,7 +67,8 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 			//擦掉最上面幾行。
 			eraseLineCount: 1
 		}
-
+		
+		//顏色
 		$scope.COLOR = {
 			//背景線的顏色。
 			stoke: "rgb(34,34,34)",
@@ -87,12 +88,23 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				Z: "rgb(200, 100, 200)"
 			}
 		};
+		
+		//數據陣列
+		$scope.DATA = {
+			//計分
+			score: 0,
+			//按鍵點擊限制(1000 = 1秒)
+			lock_time: 50,
+			//下降速度(1000 = 1秒)
+			level: 1000
+		}
+		
 		//方塊設定(4種方向的形狀)
 		$scope.TETRIMINO = {
 			I: [["0,1", "1,1", "2,1", "3,1"], ["2,0", "2,1", "2,2", "2,3"], ["0,2", "1,2", "2,2", "3,2"], ["1,0", "1,1", "1,2", "1,3"]],
 			J: [["0,0", "0,1", "1,1", "2,1"], ["1,0", "2,0", "1,1", "1,2"], ["0,1", "1,1", "2,1", "2,2"], ["0,2", "1,0", "1,1", "1,2"]],
 			L: [["0,1", "1,1", "2,1", "2,0"], ["1,0", "1,1", "1,2", "2,2"], ["0,1", "0,2", "1,1", "2,1"], ["0,0", "1,0", "1,1", "1,2"]],
-			O: [["1,0", "2,0", "1,1", "2,1"]],
+			O: [["1,0", "2,0", "1,1", "2,1"], ["1,0", "2,0", "1,1", "2,1"], ["1,0", "2,0", "1,1", "2,1"], ["1,0", "2,0", "1,1", "2,1"]],
 			S: [["1,0", "2,0", "0,1", "1,1"], ["1,0", "1,1", "2,1", "2,2"], ["1,1", "2,1", "0,2", "1,2"], ["0,0", "0,1", "1,1", "1,2"]],
 			T: [["0,1", "1,0", "1,1", "2,1"], ["1,0", "1,1", "1,2", "2,1"], ["0,1", "1,1", "2,1", "1,2"], ["0,1", "1,0", "1,1", "1,2"]],
 			Z: [["0,0", "1,0", "1,1", "2,1"], ["1,1", "1,2", "2,0", "2,1"], ["0,1", "1,1", "1,2", "2,2"], ["0,1", "0,2", "1,0", "1,1"]]
@@ -258,7 +270,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 			var event = new Event('keydown');
 			event.key = $scope.KEY.ARROW_DOWN;
 			document.dispatchEvent(event);
-		}, 1000);
+		}, $scope.DATA.level);
 		$scope.isGamePause = false;
 	}
 	
@@ -364,13 +376,14 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 			}
 			//畫出來 tetrimino 的部分。
 			ctx.globalAlpha = 1;
-			var gridPosition = $scope.TETRIMINO[$scope.tetrimino_main.type][$scope.tetrimino_main.direction];
-			for (var i = 0; i < gridPosition.length; i++) {
-				var position = gridPosition[i].split(",");
+			var gridPosition2 = $scope.TETRIMINO[$scope.tetrimino_main.type][$scope.tetrimino_main.direction];
+			for (var i = 0; i < gridPosition2.length; i++) {
+				var position = gridPosition2[i].split(",");
 				var x = Number(position[0]) + $scope.tetrimino_main.positionX;
 				var y = Number(position[1]) + $scope.tetrimino_main.positionY;
 				$scope.drawGrid(ctx, x, y, $scope.COLOR.TETRIMINO[$scope.tetrimino_main.type], $scope.STYLE.gridPixel, $scope.STYLE.linePixel);
 			}
+			
 		}
 		//最上面幾行擦掉。
 		ctx.clearRect(0, 0, $scope.TETRIS.width * $scope.STYLE.gridPixel, $scope.STYLE.eraseLineCount * $scope.STYLE.gridPixel);
@@ -427,7 +440,6 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	 */
      $scope.getDropPosition = function() {
 		var main = angular.copy($scope.tetrimino_main);
-		//
         while (!$scope.isCollision(main)) {
 			main.positionY++;
         }
@@ -481,8 +493,10 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
             }
             if (isFull) {
                 fullLineCount++;
+				$scope.score_change(1000);
             }
         }
+		
         $scope.tetrisArray = newTetrisArray;
     };
 	
@@ -534,7 +548,6 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 		if(spare == ''){
 			$scope.tetrimino_spare.type = main;
 			$scope.tetrimino_main.type = next;
-			$scope.next_init();
 		}
 		//備用區域 IS NOT NULL : 備用區域存主方塊，主區域存備用方塊
 		else{
@@ -547,11 +560,13 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	 * =================================碰撞檢查=================================
 	 */
 	$scope.isCollision = function(main){
-		var gridPosition = $scope.TETRIMINO[main.type][main.direction];
+		var gridPosition = [];
+		gridPosition = $scope.TETRIMINO[main.type][main.direction];
 		for (var i = 0; i < gridPosition.length; i++) {
 			var position = gridPosition[i].split(",");
             var x = Number(position[0]) + main.positionX;
 			var y = Number(position[1]) + main.positionY;
+			
 			if (x < 0 || ($scope.TETRIS.width - 1) < x) {
 				return true;
 			}
@@ -643,11 +658,22 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				if($scope.isGameOver || $scope.KEY_LOCK.C == 1){
 					return;
 				}
+				
+				//先記錄3區域方塊，以便復原用
+				var main = angular.copy($scope.tetrimino_main.type);
+				var spare = angular.copy($scope.tetrimino_spare.type);
+				var next = angular.copy($scope.tetrimino_next.type);
+				debugger
 				$scope.change();
 				//如果此操作會發生碰撞，就返回剛剛對俄羅斯方塊的操作。
 				if ($scope.isCollision($scope.tetrimino_main)) {
-					$scope.change();
+					$scope.tetrimino_main.type = main;
+					$scope.tetrimino_spare.type = spare;
+					$scope.tetrimino_next.type = next;
 				} else {
+					if(spare == ''){
+						$scope.next_init();
+					}
 					$scope.redraw();
 					$scope.redraw_spare();
 				}
@@ -680,6 +706,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				//如果此操作會發生碰撞，就返回剛剛對俄羅斯方塊的操作。
 				if ($scope.isCollision($scope.tetrimino_main)) {
 					$scope.move($scope.DIRECTION.UP);
+					
 					//將$scope.tetrimino_main存入$scope.tetrisArray
 					var gridPosition = $scope.TETRIMINO[$scope.tetrimino_main.type][$scope.tetrimino_main.direction];
 					for (var i = 0; i < gridPosition.length; i++) {
@@ -692,6 +719,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 					
 					$scope.redraw();
 					$scope.checkAndDestroyLine();
+					$scope.score_change(10);
 					//換下一個俄羅斯方塊的時候，如果發生碰撞就代表遊戲結束。
 					$scope.tetrmino_init();
 					if ($scope.isCollision($scope.tetrimino_main)) {
@@ -699,6 +727,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 					} else {
 						$scope.redraw();
 					}
+						
 				} else {
 					$scope.redraw();
 				}
@@ -707,7 +736,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				//延遲後解鎖
 				setTimeout(function(){
 					$scope.KEY_LOCK.ARROW_DOWN = 0;
-				},$scope.lock_time);
+				},$scope.DATA.lock_time);
 				break;
 			
 			//←
@@ -727,7 +756,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				//延遲後解鎖
 				setTimeout(function(){
 					$scope.KEY_LOCK.ARROW_LEFT = 0;
-				},$scope.lock_time);
+				},$scope.DATA.lock_time);
 				break;
 			
 			//→
@@ -741,13 +770,15 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 					$scope.move($scope.DIRECTION.LEFT);
 				} else {
 					$scope.redraw();
+					
+					
 				}
 				//鎖鍵
 				$scope.KEY_LOCK.ARROW_RIGHT = 1;
 				//延遲後解鎖
 				setTimeout(function(){
 					$scope.KEY_LOCK.ARROW_RIGHT = 0;
-				},$scope.lock_time);
+				},$scope.DATA.lock_time);
 				break;
 			
 			//▼
@@ -773,6 +804,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 					
 					$scope.redraw();
 					$scope.checkAndDestroyLine();
+					$scope.score_change(20);
 					//換下一個俄羅斯方塊的時候，如果發生碰撞就代表遊戲結束。
 					$scope.tetrmino_init();
 					if ($scope.isCollision($scope.tetrimino_main)) {
@@ -790,7 +822,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	});
 	
 	/**
-	 * ========================解鎖按鍵(按住連續觸發防呆)========================
+	 * ========================解鎖按鍵(防止按住連續觸發)========================
 	 */
 	document.addEventListener('keyup', function (event) {
 		var key = event.key;
@@ -831,6 +863,56 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 		}
 	});
 	
+	/**
+	 * =================================速度分級=================================
+	 */
+    $scope.level_change = function (){
+		if (!$scope.isGameOver) {
+			if($scope.DATA.score && $scope.DATA.score < 5000){
+				$scope.DATA.level = 1000;
+				document.getElementById("level").innerHTML = '1';
+			}else if($scope.DATA.score && $scope.DATA.score < 11000){
+				$scope.DATA.level = 900;
+				document.getElementById("level").innerHTML = '2';
+			}else if($scope.DATA.score && $scope.DATA.score < 18000){
+				$scope.DATA.level = 800;
+				document.getElementById("level").innerHTML = '3';
+			}else if($scope.DATA.score && $scope.DATA.score < 26000){
+				$scope.DATA.level = 700;
+				document.getElementById("level").innerHTML = '4';
+			}else if($scope.DATA.score && $scope.DATA.score < 35000){
+				$scope.DATA.level = 600;
+				document.getElementById("level").innerHTML = '5';
+			}else if($scope.DATA.score && $scope.DATA.score < 45000){
+				$scope.DATA.level = 500;
+				document.getElementById("level").innerHTML = '6';
+			}else if($scope.DATA.score && $scope.DATA.score < 57000){
+				$scope.DATA.level = 450;
+				document.getElementById("level").innerHTML = '7';
+			}else if($scope.DATA.score && $scope.DATA.score < 71000){
+				$scope.DATA.level = 400;
+				document.getElementById("level").innerHTML = '8';
+			}else if($scope.DATA.score && $scope.DATA.score < 88000){
+				$scope.DATA.level = 350;
+				document.getElementById("level").innerHTML = '9';
+			}else if($scope.DATA.score && $scope.DATA.score < 100000){
+				$scope.DATA.level = 300;
+				document.getElementById("level").innerHTML = 'MAX';
+			}else{
+				$scope.DATA.level = 200;
+				document.getElementById("level").innerHTML = '--';
+			}
+			
+			clearInterval($scope.interval);
+			$scope.start();
+		}
+    };
+	
+	$scope.score_change = function (score){
+		$scope.DATA.score += score;
+		document.getElementById("score").innerHTML = $scope.DATA.score;
+		$scope.level_change();
+	}
 	
 	$scope.init();
 });
