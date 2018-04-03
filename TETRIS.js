@@ -295,9 +295,9 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 		ctx.fillStyle = "rgb(0,0,0)";
 		ctx.beginPath();
 		ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.closePath();
-        ctx.stroke();
-        ctx.fill();
+		ctx.closePath();
+		ctx.stroke();
+		ctx.fill();
 		//最上面幾行擦掉。
 		ctx.clearRect(0, 0, $scope.TETRIS.width * $scope.STYLE.gridPixel, $scope.STYLE.eraseLineCount * $scope.STYLE.gridPixel);
 		
@@ -308,9 +308,9 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 		ctx.textAlign = "center";
 		ctx.font = "40px Arial";
 		ctx.fillText(text, canvas.width/2, canvas.height/3);
-        ctx.closePath();
-        ctx.stroke();
-        ctx.fill();
+		ctx.closePath();
+		ctx.stroke();
+		ctx.fill();
 		$scope.isGamePause = true;
 	};
 	
@@ -672,7 +672,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				var main = angular.copy($scope.tetrimino_main.type);
 				var spare = angular.copy($scope.tetrimino_spare.type);
 				var next = angular.copy($scope.tetrimino_next.type);
-				debugger
+				
 				$scope.change();
 				//如果此操作會發生碰撞，就返回剛剛對俄羅斯方塊的操作。
 				if ($scope.isCollision($scope.tetrimino_main)) {
