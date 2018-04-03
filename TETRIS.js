@@ -617,6 +617,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				else{
 					$scope.pause('PAUSE');
 				}
+				
 				//鎖鍵
 				$scope.KEY_LOCK.P = 1;
 				break;
@@ -633,8 +634,12 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				} else {
 					$scope.redraw();
 				}
-				//鎖鍵
-				$scope.KEY_LOCK.Z = 1;
+
+				//僅限$scope.DATA.level 200以上
+				if($scope.DATA.level > 200){
+					//鎖鍵
+					$scope.KEY_LOCK.Z = 1;
+				}
 				break;
 				
 			//順時針旋轉
@@ -649,8 +654,12 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				} else {
 					$scope.redraw();
 				}
-				//鎖鍵
-				$scope.KEY_LOCK.X = 1;
+
+				//僅限$scope.DATA.level 200以上
+				if($scope.DATA.level > 200){
+					//鎖鍵
+					$scope.KEY_LOCK.X = 1;
+				}
 				break;
 			
 			//調換
@@ -677,8 +686,12 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 					$scope.redraw();
 					$scope.redraw_spare();
 				}
-				//鎖鍵
-				$scope.KEY_LOCK.C = 1;
+
+				//僅限$scope.DATA.level 200以上
+				if($scope.DATA.level > 200){
+					//鎖鍵
+					$scope.KEY_LOCK.C = 1;
+				}
 				break;
 			
 			//↑
@@ -693,8 +706,12 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				} else {
 					$scope.redraw();
 				}
-				//鎖鍵
-				$scope.KEY_LOCK.ARROW_UP = 1;
+
+				//僅限$scope.DATA.level 200以上
+				if($scope.DATA.level > 200){
+					//鎖鍵
+					$scope.KEY_LOCK.ARROW_UP = 1;
+				}
 				break;
 			
 			//↓
@@ -731,12 +748,16 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				} else {
 					$scope.redraw();
 				}
-				//鎖鍵
-				$scope.KEY_LOCK.ARROW_DOWN = 1;
-				//延遲後解鎖
-				setTimeout(function(){
-					$scope.KEY_LOCK.ARROW_DOWN = 0;
-				},$scope.DATA.lock_time);
+				
+				//僅限$scope.DATA.level 200以上
+				if($scope.DATA.level > 200){
+					//鎖鍵
+					$scope.KEY_LOCK.ARROW_DOWN = 1;
+					//延遲後解鎖
+					setTimeout(function(){
+						$scope.KEY_LOCK.ARROW_DOWN = 0;
+					},$scope.DATA.lock_time);
+				}
 				break;
 			
 			//←
@@ -751,12 +772,16 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				} else {
 					$scope.redraw();
 				}
-				//鎖鍵
-				$scope.KEY_LOCK.ARROW_LEFT = 1;
-				//延遲後解鎖
-				setTimeout(function(){
-					$scope.KEY_LOCK.ARROW_LEFT = 0;
-				},$scope.DATA.lock_time);
+
+				//僅限$scope.DATA.level 200以上
+				if($scope.DATA.level > 200){
+					//鎖鍵
+					$scope.KEY_LOCK.ARROW_LEFT = 1;
+					//延遲後解鎖
+					setTimeout(function(){
+						$scope.KEY_LOCK.ARROW_LEFT = 0;
+					},$scope.DATA.lock_time);
+				}
 				break;
 			
 			//→
@@ -770,15 +795,17 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 					$scope.move($scope.DIRECTION.LEFT);
 				} else {
 					$scope.redraw();
-					
-					
 				}
-				//鎖鍵
-				$scope.KEY_LOCK.ARROW_RIGHT = 1;
-				//延遲後解鎖
-				setTimeout(function(){
-					$scope.KEY_LOCK.ARROW_RIGHT = 0;
-				},$scope.DATA.lock_time);
+
+				//僅限$scope.DATA.level 200以上
+				if($scope.DATA.level > 200){
+					//鎖鍵
+					$scope.KEY_LOCK.ARROW_RIGHT = 1;
+					//延遲後解鎖
+					setTimeout(function(){
+						$scope.KEY_LOCK.ARROW_RIGHT = 0;
+					},$scope.DATA.lock_time);
+				}
 				break;
 			
 			//▼
@@ -868,38 +895,38 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	 */
     $scope.level_change = function (){
 		if (!$scope.isGameOver) {
-			if($scope.DATA.score && $scope.DATA.score < 5000){
+			if($scope.DATA.score < 5000){
 				$scope.DATA.level = 1000;
 				document.getElementById("level").innerHTML = '1';
-			}else if($scope.DATA.score && $scope.DATA.score < 11000){
+			}else if($scope.DATA.score < 10000){
 				$scope.DATA.level = 900;
 				document.getElementById("level").innerHTML = '2';
-			}else if($scope.DATA.score && $scope.DATA.score < 18000){
+			}else if($scope.DATA.score < 15000){
 				$scope.DATA.level = 800;
 				document.getElementById("level").innerHTML = '3';
-			}else if($scope.DATA.score && $scope.DATA.score < 26000){
+			}else if($scope.DATA.score < 20000){
 				$scope.DATA.level = 700;
 				document.getElementById("level").innerHTML = '4';
-			}else if($scope.DATA.score && $scope.DATA.score < 35000){
+			}else if($scope.DATA.score < 26000){
 				$scope.DATA.level = 600;
 				document.getElementById("level").innerHTML = '5';
-			}else if($scope.DATA.score && $scope.DATA.score < 45000){
+			}else if($scope.DATA.score < 33000){
 				$scope.DATA.level = 500;
 				document.getElementById("level").innerHTML = '6';
-			}else if($scope.DATA.score && $scope.DATA.score < 57000){
-				$scope.DATA.level = 450;
-				document.getElementById("level").innerHTML = '7';
-			}else if($scope.DATA.score && $scope.DATA.score < 71000){
+			}else if($scope.DATA.score < 41000){
 				$scope.DATA.level = 400;
-				document.getElementById("level").innerHTML = '8';
-			}else if($scope.DATA.score && $scope.DATA.score < 88000){
-				$scope.DATA.level = 350;
-				document.getElementById("level").innerHTML = '9';
-			}else if($scope.DATA.score && $scope.DATA.score < 100000){
+				document.getElementById("level").innerHTML = '7';
+			}else if($scope.DATA.score < 50000){
 				$scope.DATA.level = 300;
+				document.getElementById("level").innerHTML = '8';
+			}else if($scope.DATA.score < 60000){
+				$scope.DATA.level = 200;
+				document.getElementById("level").innerHTML = '9';
+			}else if($scope.DATA.score < 80000){
+				$scope.DATA.level = 100;
 				document.getElementById("level").innerHTML = 'MAX';
 			}else{
-				$scope.DATA.level = 200;
+				$scope.DATA.level = 50;
 				document.getElementById("level").innerHTML = '--';
 			}
 			
