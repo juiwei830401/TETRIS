@@ -20,17 +20,17 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 
 	$scope.isGameOver = true;		//結束判斷
 	$scope.isGamePause = false;		//暫停判斷
-	$scope.TETRIS = {};				//方塊種類
-	$scope.STYLE = {};				//每一格、線長寬
-	$scope.COLOR = {};				//顏色
+	$scope.TETRIS = {};			//方塊種類
+	$scope.STYLE = {};			//每一格、線長寬
+	$scope.COLOR = {};			//顏色
 	$scope.TETRIMINO = {};			//方塊長寬
-	$scope.KEY = {};				//按鍵陣列
-	$scope.STATUS = {};				//陣列有無
+	$scope.KEY = {};			//按鍵陣列
+	$scope.STATUS = {};			//陣列有無
 	$scope.DIRECTION = {};			//按鍵按鍵
 	$scope.KEY_LOCK = {};			//按鍵狀態
 	$scope.tetrisArray = [];		//主區域陣列
 	$scope.tetrimino_main = {};		//方塊陣列
-	$scope.DATA = {};				//數據陣列
+	$scope.DATA = {};			//數據陣列
 
 	////標題:一次性繪製
 	//canvas_title.width = 400;
@@ -60,98 +60,98 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 
 		//每一格、線長寬
 		$scope.STYLE = {
-				//線寬。
-				linePixel: 3,
-				//每一個格子的寬度。（包括線的部分）
-				gridPixel: 28,
-				//擦掉最上面幾行。
-				eraseLineCount: 1
+			//線寬。
+			linePixel: 3,
+			//每一個格子的寬度。（包括線的部分）
+			gridPixel: 31,
+			//擦掉最上面幾行。
+			eraseLineCount: 1
 		}
 
 		//顏色
 		$scope.COLOR = {
-				//背景線的顏色。
-				stoke: "rgb(34,34,34)",
-				//雙色相間的背景格子色。
-				fill: ["rgb(43,43,43)", "rgb(47,47,47)"],
-				//預先顯示掉落處的格子色。
-				dropFill: "rgb(102,102,102)",
-				dropFillAlpha: 0.5,
-				//依照不同種類的俄羅斯方塊給予不同的顏色。
-				TETRIMINO: {
-					I: "rgb(150, 200, 250)",
-					J: "rgb(0, 100, 200)",
-					L: "rgb(250, 150, 0)",
-					O: "rgb(255, 100, 100)",
-					S: "rgb(150, 250, 150)",
-					T: "rgb(250, 200, 250)",
-					Z: "rgb(200, 100, 200)"
-				}
+			//背景線的顏色。
+			stoke: "rgb(34,34,34)",
+			//雙色相間的背景格子色。
+			fill: ["rgb(43,43,43)", "rgb(47,47,47)"],
+			//預先顯示掉落處的格子色。
+			dropFill: "rgb(102,102,102)",
+			dropFillAlpha: 0.5,
+			//依照不同種類的俄羅斯方塊給予不同的顏色。
+			TETRIMINO: {
+				I: "rgb(150, 200, 250)",
+				J: "rgb(0, 100, 200)",
+				L: "rgb(250, 150, 0)",
+				O: "rgb(255, 100, 100)",
+				S: "rgb(150, 250, 150)",
+				T: "rgb(250, 200, 250)",
+				Z: "rgb(200, 100, 200)"
+			}
 		};
 
 		//數據陣列
 		$scope.DATA = {
-				//消除數
-				score: 0,
-				//按鍵點擊限制(1000 = 1秒)
-				lock_time: 50,
-				//下降速度(1000 = 1秒)
-				level: 1000
+			//消除數
+			score: 0,
+			//按鍵點擊限制(1000 = 1秒)
+			lock_time: 50,
+			//下降速度(1000 = 1秒)
+			level: 1000
 		}
 
 		//方塊設定(4種方向的形狀)
 		$scope.TETRIMINO = {
-				I: [["0,1", "1,1", "2,1", "3,1"], ["2,0", "2,1", "2,2", "2,3"], ["0,2", "1,2", "2,2", "3,2"], ["1,0", "1,1", "1,2", "1,3"]],
-				J: [["0,0", "0,1", "1,1", "2,1"], ["1,0", "2,0", "1,1", "1,2"], ["0,1", "1,1", "2,1", "2,2"], ["0,2", "1,0", "1,1", "1,2"]],
-				L: [["0,1", "1,1", "2,1", "2,0"], ["1,0", "1,1", "1,2", "2,2"], ["0,1", "0,2", "1,1", "2,1"], ["0,0", "1,0", "1,1", "1,2"]],
-				O: [["1,0", "2,0", "1,1", "2,1"], ["1,0", "2,0", "1,1", "2,1"], ["1,0", "2,0", "1,1", "2,1"], ["1,0", "2,0", "1,1", "2,1"]],
-				S: [["1,0", "2,0", "0,1", "1,1"], ["1,0", "1,1", "2,1", "2,2"], ["1,1", "2,1", "0,2", "1,2"], ["0,0", "0,1", "1,1", "1,2"]],
-				T: [["0,1", "1,0", "1,1", "2,1"], ["1,0", "1,1", "1,2", "2,1"], ["0,1", "1,1", "2,1", "1,2"], ["0,1", "1,0", "1,1", "1,2"]],
-				Z: [["0,0", "1,0", "1,1", "2,1"], ["1,1", "1,2", "2,0", "2,1"], ["0,1", "1,1", "1,2", "2,2"], ["0,1", "0,2", "1,0", "1,1"]]
+			I: [["0,1", "1,1", "2,1", "3,1"], ["2,0", "2,1", "2,2", "2,3"], ["0,2", "1,2", "2,2", "3,2"], ["1,0", "1,1", "1,2", "1,3"]],
+			J: [["0,0", "0,1", "1,1", "2,1"], ["1,0", "2,0", "1,1", "1,2"], ["0,1", "1,1", "2,1", "2,2"], ["0,2", "1,0", "1,1", "1,2"]],
+			L: [["0,1", "1,1", "2,1", "2,0"], ["1,0", "1,1", "1,2", "2,2"], ["0,1", "0,2", "1,1", "2,1"], ["0,0", "1,0", "1,1", "1,2"]],
+			O: [["1,0", "2,0", "1,1", "2,1"], ["1,0", "2,0", "1,1", "2,1"], ["1,0", "2,0", "1,1", "2,1"], ["1,0", "2,0", "1,1", "2,1"]],
+			S: [["1,0", "2,0", "0,1", "1,1"], ["1,0", "1,1", "2,1", "2,2"], ["1,1", "2,1", "0,2", "1,2"], ["0,0", "0,1", "1,1", "1,2"]],
+			T: [["0,1", "1,0", "1,1", "2,1"], ["1,0", "1,1", "1,2", "2,1"], ["0,1", "1,1", "2,1", "1,2"], ["0,1", "1,0", "1,1", "1,2"]],
+			Z: [["0,0", "1,0", "1,1", "2,1"], ["1,1", "1,2", "2,0", "2,1"], ["0,1", "1,1", "1,2", "2,2"], ["0,1", "0,2", "1,0", "1,1"]]
 		};
 
 		//按鍵設定
 		$scope.KEY = {
-				ENTER: "Enter",
-				SPACE: " ",
-				Z: "z",
-				X: "x",
-				C: "c",
-				P: "p",
-				ARROW_UP: "ArrowUp",
-				ARROW_RIGHT: "ArrowRight",
-				ARROW_DOWN: "ArrowDown",
-				ARROW_LEFT: "ArrowLeft"
+			ENTER: "Enter",
+			SPACE: " ",
+			Z: "z",
+			X: "x",
+			C: "c",
+			P: "p",
+			ARROW_UP: "ArrowUp",
+			ARROW_RIGHT: "ArrowRight",
+			ARROW_DOWN: "ArrowDown",
+			ARROW_LEFT: "ArrowLeft"
 		}
 
 		//按鍵狀態:0=開，1=鎖
 		$scope.KEY_LOCK = {
-				ENTER: 0,
-				SPACE: 0,
-				Z: 0,
-				X: 0,
-				C: 0,
-				P: 0,
-				ARROW_UP: 0,
-				ARROW_RIGHT: 0,
-				ARROW_DOWN: 0,
-				ARROW_LEFT: 0
+			ENTER: 0,
+			SPACE: 0,
+			Z: 0,
+			X: 0,
+			C: 0,
+			P: 0,
+			ARROW_UP: 0,
+			ARROW_RIGHT: 0,
+			ARROW_DOWN: 0,
+			ARROW_LEFT: 0
 		}
 
 		//狀態:0=無，1=有
 		$scope.STATUS = {
-				EMPTY: 0,
-				OCCUPIED: 1
+			EMPTY: 0,
+			OCCUPIED: 1
 		};
 
 		//方塊動作
 		$scope.DIRECTION = {
-				ANTICLOCKWISE: 0,
-				CLOCKWISE: 1,
-				UP: 2,
-				RIGHT: 3,
-				DOWN: 4,
-				LEFT: 5
+			ANTICLOCKWISE: 0,
+			CLOCKWISE: 1,
+			UP: 2,
+			RIGHT: 3,
+			DOWN: 4,
+			LEFT: 5
 		}
 
 		/**-------------------------------------------------------**/
@@ -167,7 +167,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 		for (var x = 0; x < $scope.tetrisArray.length; x++) {
 			for (var y = 0; y < $scope.tetrisArray[x].length; y++) {
 				$scope.tetrisArray[x][y] = {
-						status: $scope.STATUS.EMPTY
+					status: $scope.STATUS.EMPTY
 				};
 			}
 		}
@@ -184,7 +184,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 		for (var x = 0; x < $scope.tetrisArray_next.length; x++) {
 			for (var y = 0; y < $scope.tetrisArray_next[x].length; y++) {
 				$scope.tetrisArray_next[x][y] = {
-						status: $scope.STATUS.EMPTY
+					status: $scope.STATUS.EMPTY
 				};
 			}
 		}
@@ -201,7 +201,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 		for (var x = 0; x < $scope.tetrisArray_spare.length; x++) {
 			for (var y = 0; y < $scope.tetrisArray_spare[x].length; y++) {
 				$scope.tetrisArray_spare[x][y] = {
-						status: $scope.STATUS.EMPTY
+					status: $scope.STATUS.EMPTY
 				};
 			}
 		}
@@ -223,10 +223,10 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 		var typeArray = Object.keys($scope.TETRIMINO);
 		var index = Math.floor(Math.random() * typeArray.length);
 		$scope.tetrimino_next = {
-				type : typeArray[index],
-				direction : 0,
-				positionX : 0,
-				positionY : 0
+			type : typeArray[index],
+			direction : 0,
+			positionX : 0,
+			positionY : 0
 		}
 		$scope.redraw_next();
 	}
@@ -237,10 +237,10 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	$scope.tetrmino_init = function(){
 		//取預告區域的方塊
 		$scope.tetrimino_main = {
-				type : angular.copy($scope.tetrimino_next.type),
-				direction : 0,
-				positionX : 3,
-				positionY : 0
+			type : angular.copy($scope.tetrimino_next.type),
+			direction : 0,
+			positionX : 3,
+			positionY : 0
 		}
 		$scope.redraw();
 		$scope.next_init();
@@ -251,10 +251,10 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 	 */
 	$scope.spare_init = function(){
 		$scope.tetrimino_spare = {
-				type : '',
-				direction : 0,
-				positionX : 0,
-				positionY : 0
+			type : '',
+			direction : 0,
+			positionX : 0,
+			positionY : 0
 		}
 		$scope.redraw_spare();
 	}
@@ -340,8 +340,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				var position = gridPosition[i].split(",");
 				var x = Number(position[0]) + $scope.tetrimino_next.positionX;
 				var y = Number(position[1]) + $scope.tetrimino_next.positionY;
-				$scope.drawGrid(ctx_next, x, y, $scope.COLOR.TETRIMINO[$scope.tetrimino_next.type], $scope.STYLE.gridPixel, 
-						$scope.STYLE.linePixel);
+				$scope.drawGrid(ctx_next, x, y, $scope.COLOR.TETRIMINO[$scope.tetrimino_next.type], $scope.STYLE.gridPixel, $scope.STYLE.linePixel);
 			}
 		}
 	}
@@ -382,8 +381,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				var position = gridPosition2[i].split(",");
 				var x = Number(position[0]) + $scope.tetrimino_main.positionX;
 				var y = Number(position[1]) + $scope.tetrimino_main.positionY;
-				$scope.drawGrid(ctx, x, y, $scope.COLOR.TETRIMINO[$scope.tetrimino_main.type], $scope.STYLE.gridPixel, 
-						$scope.STYLE.linePixel);
+				$scope.drawGrid(ctx, x, y, $scope.COLOR.TETRIMINO[$scope.tetrimino_main.type], $scope.STYLE.gridPixel, $scope.STYLE.linePixel);
 			}
 
 		}
@@ -418,8 +416,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				var position = gridPosition[i].split(",");
 				var x = Number(position[0]) + $scope.tetrimino_spare.positionX;
 				var y = Number(position[1]) + $scope.tetrimino_spare.positionY;
-				$scope.drawGrid(ctx_spare, x, y, $scope.COLOR.TETRIMINO[$scope.tetrimino_spare.type], $scope.STYLE.gridPixel, 
-						$scope.STYLE.linePixel);
+				$scope.drawGrid(ctx_spare, x, y, $scope.COLOR.TETRIMINO[$scope.tetrimino_spare.type], $scope.STYLE.gridPixel, $scope.STYLE.linePixel);
 			}
 		}
 	}
@@ -490,7 +487,7 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 				} else {
 					//依據 fullLineCount 最上面幾行直接給予空行。
 					newTetrisArray[x][y] = {
-							status: $scope.STATUS.EMPTY
+						status: $scope.STATUS.EMPTY
 					};
 				}
 			}
