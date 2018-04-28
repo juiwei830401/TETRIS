@@ -619,10 +619,28 @@ app.controller('TETRIS', function ($rootScope, $scope, $controller, $filter, $ti
 
 			//停止=>開始
 			if($scope.isGamePause){
+				$scope.KEY_LOCK.ENTER = 0;
+				$scope.KEY_LOCK.Z = 0;
+				$scope.KEY_LOCK.X = 0;
+				$scope.KEY_LOCK.C = 0;
+				$scope.KEY_LOCK.ARROW_UP = 0;
+				$scope.KEY_LOCK.ARROW_DOWN = 0;
+				$scope.KEY_LOCK.ARROW_LEFT = 0;
+				$scope.KEY_LOCK.ARROW_RIGHT = 0;
+				$scope.KEY_LOCK.SPACE = 0;
 				$scope.start();
 			}
 			//開始=>停止
 			else{
+				$scope.KEY_LOCK.ENTER = 1;
+				$scope.KEY_LOCK.Z = 1;
+				$scope.KEY_LOCK.X = 1;
+				$scope.KEY_LOCK.C = 1;
+				$scope.KEY_LOCK.ARROW_UP = 1;
+				$scope.KEY_LOCK.ARROW_DOWN = 1;
+				$scope.KEY_LOCK.ARROW_LEFT = 1;
+				$scope.KEY_LOCK.ARROW_RIGHT = 1;
+				$scope.KEY_LOCK.SPACE = 1;
 				$scope.pause('PAUSE');
 			}
 
